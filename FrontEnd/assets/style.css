@@ -186,7 +186,7 @@ footer nav ul {
 	margin: 2em
 }
 
-.button-filter p{
+button{
 	color: #1D6154;
 	font-size: 17px;
 	border: 2.5px solid #1D6154;
@@ -203,7 +203,7 @@ footer nav ul {
 	display: flex;
 	gap: 15px;
 }
-.button-ilter:active{
+.button-filter:active{
 	background-color: #1D6154;
 	color: var(white);
 }
