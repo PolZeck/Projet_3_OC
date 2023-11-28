@@ -265,6 +265,15 @@ input{
 
 #loginForm p{
 	margin-top: 30px;
+}
+
+#errorMessage{
+	display: none;
+	color: RED;
+}
+
+#forgotPassword{
 	text-decoration: underline;
 	cursor: pointer;
 }
+
