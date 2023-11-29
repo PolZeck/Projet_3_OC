@@ -277,3 +277,6 @@ input{
 	cursor: pointer;
 }
 
+#logoutButton{
+	display: none;
+}

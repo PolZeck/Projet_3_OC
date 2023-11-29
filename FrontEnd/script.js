@@ -64,20 +64,16 @@ document.addEventListener("DOMContentLoaded", function () {
     })
     .catch(error => console.error('Erreur lors de la récupération des travaux', error));
 
-  // Vérifier si l'utilisateur est connecté lors du chargement de la page
-  const loggedIn = localStorage.getItem('loggedIn');
-  if (loggedIn !== 'true') {
-    const filterSection = document.querySelector('.filter-container'); // Utilise .filter-container au lieu de .filter
-    if (filterSection) {
-      filterSection.style.display = 'block'; // Affiche la partie .filter-container si l'utilisateur n'est pas connecté
-    }
-  }
+  
 });
+const loggedIn = localStorage.getItem('loggedIn');
 
 document.getElementById('connectBtn').addEventListener('click', async function () {
   const emailInput = document.getElementById('email');
   const passwordInput = document.getElementById('password');
   const errorMessage = document.getElementById('errorMessage');
+
+  
 
   const email = emailInput.value;
   const password = passwordInput.value;
@@ -97,11 +93,8 @@ document.getElementById('connectBtn').addEventListener('click', async function (
     if (response.ok) {
       const data = await response.json();
       if (data.token) {
-        // Redirection vers index.html
-        window.location.href = 'index.html';
-
-        // Suppression de la partie filter sur la page index.html
-        localStorage.setItem('loggedIn', 'true'); // Enregistrer dans localStorage que l'utilisateur est connecté
+        localStorage.setItem('loggedIn', 'true');
+        window.location.href = 'index.html'; // Redirection vers index.html
       }
     } else {
       errorMessage.style.display = 'block';
