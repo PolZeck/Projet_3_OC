@@ -64,16 +64,17 @@ document.addEventListener("DOMContentLoaded", function () {
     })
     .catch(error => console.error('Erreur lors de la récupération des travaux', error));
 
-  
+
 });
 const loggedIn = localStorage.getItem('loggedIn');
+
 
 document.getElementById('connectBtn').addEventListener('click', async function () {
   const emailInput = document.getElementById('email');
   const passwordInput = document.getElementById('password');
   const errorMessage = document.getElementById('errorMessage');
 
-  
+
 
   const email = emailInput.value;
   const password = passwordInput.value;
