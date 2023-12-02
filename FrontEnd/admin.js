@@ -8,6 +8,7 @@ if (loggedIn === 'true') {
     const logoutButton = document.querySelector('#logoutButton');
     const editionMode = document.querySelector('#editionMode');
     const loginButton = document.querySelector('#loginButton');
+    const modalButton = document.querySelector('#modal');
 
     if (filterSection) {
         filterSection.style.display = 'none';
