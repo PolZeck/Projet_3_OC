@@ -438,7 +438,7 @@ i {
 .modal-content {
 	background-color: #fefefe;
 	margin: 15% auto;
-	padding: 20px;
+	padding: 45px 100px 20px 90px;
 	border: 1px solid #888;
 	width: 80%;
 	max-width: 600px;
@@ -470,4 +470,38 @@ i {
 	height: 100px;
 	object-fit: cover;
 	cursor: pointer;
+}
+
+.modal-content{
+	text-align: center;
+}
+
+.modal-content h2{
+	color: black;
+	font-size: 25px;
+	margin-bottom: 30px ;
+	margin-top: 25px;
+}
+
+.gallery-photos{
+	padding-top: 20px;
+	padding-bottom: 70px;
+	border-bottom: 3px solid lightgrey;
+}
+
+.gallery-photos {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); 
+	gap: 10px;
+	text-align: left;
+  }
+  
+  .gallery-photos img {
+	width: 100% ; 
+	height: auto; 
+	margin-bottom: 20px;
+  }
+  
+.modal-content button{
+	margin: 30px 0px;
 }

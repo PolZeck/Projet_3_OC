@@ -1,4 +1,3 @@
-
 const filterSection = document.querySelector('.filter-container');
 
 // Vérifier si l'utilisateur est connecté lors du chargement de la page
