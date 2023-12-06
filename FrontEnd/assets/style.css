@@ -506,3 +506,23 @@ i {
 .modal-content button{
 	margin: 30px 0px;
 }
+
+/* Style CSS pour le conteneur d'image */
+.img-container {
+	position: relative;
+	display: inline-block; /* Permet de contenir les images et les icônes de poubelle correctement */
+}
+  
+  /* Style CSS pour l'icône de la poubelle */
+  .delete-icon {
+	padding: 3px;
+	font-size: 10px;
+	color: white;
+	background-color: black;
+	position: absolute;
+	top: 10px; /* Ajustez selon votre besoin pour la position verticale */
+	right: 10px; /* Ajustez selon votre besoin pour la position horizontale */
+	z-index: 1; /* Pour s'assurer que l'icône est au-dessus de l'image */
+	cursor: pointer;
+  }
+  

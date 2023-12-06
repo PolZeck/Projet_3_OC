@@ -137,31 +137,57 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Fonction pour charger les photos depuis l'API dans la galerie
   async function loadGalleryPhotos() {
-      try {
-          const response = await fetch('http://localhost:5678/api/works');
-          if (!response.ok) {
-              throw new Error('Erreur lors de la récupération des photos');
-          }
-          const worksData = await response.json();
-
-          // Effacer les images précédentes
-          galleryPhotos.innerHTML = '';
-
-          worksData.forEach(work => {
-              const img = document.createElement('img');
-              img.src = work.imageUrl;
-              img.alt = work.title;
-              img.classList.add('gallery-photo');
-              img.addEventListener('click', function () {
-                  openFullImage(work.imageUrl);
-              });
-              galleryPhotos.appendChild(img);
-          });
-      } catch (error) {
-          console.error('Erreur :', error);
+    try {
+      const response = await fetch('http://localhost:5678/api/works');
+      if (!response.ok) {
+        throw new Error('Erreur lors de la récupération des photos');
       }
-  }
+      const worksData = await response.json();
 
+      // Effacer les images précédentes
+      galleryPhotos.innerHTML = '';
+
+      worksData.forEach(work => {
+        const imgContainer = document.createElement('div'); // Container pour chaque image
+        const img = document.createElement('img');
+        const deleteIcon = document.createElement('i'); // Icône de la poubelle
+
+        img.src = work.imageUrl;
+        img.alt = work.title;
+        img.classList.add('gallery-photo');
+
+        deleteIcon.classList.add('fa', 'fa-trash', 'delete-icon'); // Classe pour l'icône de la poubelle
+        deleteIcon.style.color = '#ebebeb'; // Style de couleur
+        deleteIcon.addEventListener('click', async () => {
+          try {
+            const token = localStorage.getItem('token'); // Récupérer le token depuis le local storage
+            if (!token) {
+              throw new Error('Token non trouvé');
+            }
+
+            const deleteResponse = await fetch(`http://localhost:5678/api/works/${work.id}`, {
+              method: 'DELETE',
+              headers: {
+                'Authorization': `Bearer ${token}` // Inclure le token dans l'en-tête Authorization
+              }
+            });
+            if (deleteResponse.ok) {
+              imgContainer.remove(); // Supprimer l'image du DOM si la suppression réussit
+            }
+          } catch (error) {
+            console.error('Erreur lors de la suppression :', error);
+          }
+        });
+
+        imgContainer.classList.add('img-container'); // Ajouter une classe pour le conteneur d'image
+        imgContainer.appendChild(img);
+        imgContainer.appendChild(deleteIcon);
+        galleryPhotos.appendChild(imgContainer);
+      });
+    } catch (error) {
+      console.error('Erreur :', error);
+    }
+  }
 
 });
 
