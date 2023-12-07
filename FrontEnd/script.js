@@ -190,21 +190,47 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
 
-  const addPhotoButton = document.querySelector('#addPhotoButton');
-  addPhotoButton.addEventListener('click', function (event) {
-    event.preventDefault(); // Pour éviter la navigation vers #
-    
-    // Modifier le texte de "Galerie photo" en "Ajout photo"
-    const galleryTitle = document.querySelector('#galleryModal h2');
-    galleryTitle.textContent = "Ajout photo";
-    
-    // Vider le contenu de la galerie-photos dans la modale
-    const galleryPhotos = document.querySelector('.gallery-photos');
-    galleryPhotos.innerHTML = '';
+  
+
+  
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+  const galleryModal = document.getElementById('galleryModal');
+  const addPhotoModal = document.getElementById('addPhotoModal');
+  const addPhotoButton = document.getElementById('addPhotoButton');
+
+  // Fonction pour ouvrir la modale d'ajout de photo
+  function openAddPhotoModal() {
+    addPhotoModal.style.display = 'block';
+    galleryModal.style.display = 'none'; // Ferme la modale galleryModal
+  }
+
+  // Fonction pour fermer la modale d'ajout de photo
+  function closeAddPhotoModal() {
+    addPhotoModal.style.display = 'none';
+  }
+
+  // Gestionnaire d'événement pour ouvrir la modale lorsque le bouton est cliqué
+  addPhotoButton.addEventListener('click', function(event) {
+    event.preventDefault();
+    openAddPhotoModal();
   });
 
+  // Gestionnaire d'événement pour fermer la modale lorsque l'utilisateur clique sur la croix
+  const closeModal = addPhotoModal.querySelector('.close');
+  closeModal.addEventListener('click', function() {
+    closeAddPhotoModal();
+  });
 
+  // Gestionnaire d'événement pour fermer la modale lorsque l'utilisateur clique en dehors de la modale
+  window.addEventListener('click', function(event) {
+    if (event.target === addPhotoModal) {
+      closeAddPhotoModal();
+    }
+  });
 });
+
 
       // connexionPart
       
@@ -247,3 +273,4 @@ document.getElementById('connectBtn').addEventListener('click', async function (
   }
 
 });
+
