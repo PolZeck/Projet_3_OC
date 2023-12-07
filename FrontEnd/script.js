@@ -189,6 +189,21 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+
+  const addPhotoButton = document.querySelector('#addPhotoButton');
+  addPhotoButton.addEventListener('click', function (event) {
+    event.preventDefault(); // Pour éviter la navigation vers #
+    
+    // Modifier le texte de "Galerie photo" en "Ajout photo"
+    const galleryTitle = document.querySelector('#galleryModal h2');
+    galleryTitle.textContent = "Ajout photo";
+    
+    // Vider le contenu de la galerie-photos dans la modale
+    const galleryPhotos = document.querySelector('.gallery-photos');
+    galleryPhotos.innerHTML = '';
+  });
+
+
 });
 
       // connexionPart
