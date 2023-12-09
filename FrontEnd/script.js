@@ -99,6 +99,64 @@ if (loggedIn === 'true') {
     modalButton.style.display = 'block';
   }
 
+
+  const addPhotoButton = document.getElementById('addPhotoButton');
+  const galleryModal = document.getElementById('galleryModal');
+  const galleryPhotos = document.querySelector('.gallery-photos');
+  const backButton = '<i class="fa-solid fa-arrow-left"></i>';
+  let savedGalleryContent = ''; 
+  let closeButton;
+
+  const addPhotoModalContent = `
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Ajout photo</h2>
+      <div class="formContainer">  
+        <form id="addPhotoForm" enctype="multipart/form-data">
+          <label for="photo">Choisir une photo (JPG/PNG) :</label>
+          <input type="file" id="photo" name="photo" accept=".jpg, .jpeg, .png" required>
+          
+          <label for="title">Titre de la photo :</label>
+          <input type="text" id="title" name="title" required>
+          
+          <label for="category">Catégorie :</label>
+          <select id="category" name="category" required>
+          <!-- Options des catégories à charger dynamiquement -->
+          </select>
+          
+          <input type="submit" value="Envoyer">
+        </form>
+      </div>
+      <div class="backButton">${backButton}</div>
+    </div>`;
+
+  // Gestion de l'événement au clic sur "Ajouter une photo"
+  addPhotoButton.addEventListener('click', function(event) {
+    event.preventDefault();
+    
+    savedGalleryContent = galleryPhotos.innerHTML;
+   
+    galleryPhotos.innerHTML = addPhotoModalContent;
+    
+    addPhotoButton.style.display = 'none';
+   
+    galleryModal.style.display = 'block';
+
+    // Gestion de l'événement pour le bouton retour
+    const backButtonElement = document.querySelector('.backButton');
+    backButtonElement.addEventListener('click', function() {
+      
+      addPhotoButton.style.display = 'block';
+      
+      galleryPhotos.innerHTML = savedGalleryContent;
+      savedGalleryContent = '';
+      closeButton.remove();
+    });
+
+    // Stocker la référence à la croix de la modale
+    closeButton = document.querySelector('.close');
+  });
+  
   //déconnexion :
   logoutButton.addEventListener('click', function () {
     localStorage.removeItem('loggedIn');
@@ -148,19 +206,19 @@ document.addEventListener("DOMContentLoaded", function () {
       galleryPhotos.innerHTML = '';
 
       worksData.forEach(work => {
-        const imgContainer = document.createElement('div'); // Container pour chaque image
+        const imgContainer = document.createElement('div'); 
         const img = document.createElement('img');
-        const deleteIcon = document.createElement('i'); // Icône de la poubelle
+        const deleteIcon = document.createElement('i'); 
 
         img.src = work.imageUrl;
         img.alt = work.title;
         img.classList.add('gallery-photo');
 
-        deleteIcon.classList.add('fa', 'fa-trash', 'delete-icon'); // Classe pour l'icône de la poubelle
-        deleteIcon.style.color = '#ebebeb'; // Style de couleur
+        deleteIcon.classList.add('fa', 'fa-trash', 'delete-icon'); 
+        deleteIcon.style.color = '#ebebeb'; 
         deleteIcon.addEventListener('click', async () => {
           try {
-            const token = localStorage.getItem('token'); // Récupérer le token depuis le local storage
+            const token = localStorage.getItem('token'); 
             if (!token) {
               throw new Error('Token non trouvé');
             }
@@ -168,18 +226,18 @@ document.addEventListener("DOMContentLoaded", function () {
             const deleteResponse = await fetch(`http://localhost:5678/api/works/${work.id}`, {
               method: 'DELETE',
               headers: {
-                'Authorization': `Bearer ${token}` // Inclure le token dans l'en-tête Authorization
+                'Authorization': `Bearer ${token}` 
               }
             });
             if (deleteResponse.ok) {
-              imgContainer.remove(); // Supprimer l'image du DOM si la suppression réussit
+              imgContainer.remove(); 
             }
           } catch (error) {
             console.error('Erreur lors de la suppression :', error);
           }
         });
 
-        imgContainer.classList.add('img-container'); // Ajouter une classe pour le conteneur d'image
+        imgContainer.classList.add('img-container'); 
         imgContainer.appendChild(img);
         imgContainer.appendChild(deleteIcon);
         galleryPhotos.appendChild(imgContainer);
@@ -189,47 +247,12 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-
+  
   
 
   
 });
 
-document.addEventListener("DOMContentLoaded", function () {
-  const galleryModal = document.getElementById('galleryModal');
-  const addPhotoModal = document.getElementById('addPhotoModal');
-  const addPhotoButton = document.getElementById('addPhotoButton');
-
-  // Fonction pour ouvrir la modale d'ajout de photo
-  function openAddPhotoModal() {
-    addPhotoModal.style.display = 'block';
-    galleryModal.style.display = 'none'; // Ferme la modale galleryModal
-  }
-
-  // Fonction pour fermer la modale d'ajout de photo
-  function closeAddPhotoModal() {
-    addPhotoModal.style.display = 'none';
-  }
-
-  // Gestionnaire d'événement pour ouvrir la modale lorsque le bouton est cliqué
-  addPhotoButton.addEventListener('click', function(event) {
-    event.preventDefault();
-    openAddPhotoModal();
-  });
-
-  // Gestionnaire d'événement pour fermer la modale lorsque l'utilisateur clique sur la croix
-  const closeModal = addPhotoModal.querySelector('.close');
-  closeModal.addEventListener('click', function() {
-    closeAddPhotoModal();
-  });
-
-  // Gestionnaire d'événement pour fermer la modale lorsque l'utilisateur clique en dehors de la modale
-  window.addEventListener('click', function(event) {
-    if (event.target === addPhotoModal) {
-      closeAddPhotoModal();
-    }
-  });
-});
 
 
       // connexionPart
@@ -271,6 +294,9 @@ document.getElementById('connectBtn').addEventListener('click', async function (
   } catch (error) {
     console.error('Erreur :', error);
   }
+  
 
 });
+
+
 

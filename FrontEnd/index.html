@@ -83,28 +83,6 @@
 					<button id="addPhotoButton">Ajouter une photo</button>
 				</div>
 			</div>
-			<div id="addPhotoModal" class="modal" style="display: none;">
-				<div class="modal-content">
-				  <span class="close">&times;</span>
-					<div class="formContainer">	
-				  		<h2>Ajout photo</h2>
-						<form id="addPhotoForm" enctype="multipart/form-data">
-							<label for="photo">Choisir une photo (JPG/PNG) :</label>
-							<input type="file" id="photo" name="photo" accept=".jpg, .jpeg, .png" required>
-							
-							<label for="title">Titre de la photo :</label>
-							<input type="text" id="title" name="title" required>
-							
-							<label for="category">Catégorie :</label>
-							<select id="category" name="category" required>
-							<!-- Options des catégories à charger dynamiquement -->
-							</select>
-							
-							<input type="submit" value="Envoyer">
-						</form>
-					</div>
-				</div>
-			</div>	
 		</aside>
 	</main>
 
