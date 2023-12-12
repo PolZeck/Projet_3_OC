@@ -615,3 +615,9 @@ input[type="file"] {
 	background-color: #fff;
 	height: 50px;
 }
+
+#validatePhotoFile{
+	background-color: grey;
+	cursor: pointer;
+}
+

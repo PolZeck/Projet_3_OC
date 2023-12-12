@@ -5,6 +5,73 @@ document.addEventListener("DOMContentLoaded", function () {
   let categories = [];
 
 
+  
+
+  fetch('http://localhost:5678/api/categories')
+  .then(response => response.json())
+  .then(data => {
+    categories = data;
+    
+    populateCategoriesSelect(); // Appel de la fonction pour peupler le select avec les catégories
+  })
+  .catch(error => console.error('Erreur lors de la récupération des catégories', error));
+
+  function populateCategoriesSelect() {
+    const categorySelect = document.getElementById('category');
+
+    categories.forEach(category => {
+      const option = document.createElement('option');
+      option.value = category.id;
+      option.textContent = category.name;
+      categorySelect.appendChild(option);
+    });
+  }
+  const photoForm = document.getElementById('photoForm');
+photoForm.addEventListener('submit', function (event) {
+  event.preventDefault();
+
+  // Récupérer les valeurs du formulaire
+  const title = document.getElementById('title').value;
+  const selectedCategoryId = document.getElementById('category').value;
+  const photoInput = document.getElementById('photo');
+  const photoFile = photoInput.files[0];
+
+  if (title && selectedCategoryId && photoFile) {
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('categoryId', selectedCategoryId);
+    formData.append('photo', photoFile);
+
+    // Récupérer le token depuis le localStorage
+    const token = localStorage.getItem('token');
+
+    // Envoi des données à l'API avec le token d'accès dans les en-têtes
+    fetch('http://localhost:5678/api/works', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}` // Ajout du token dans les en-têtes
+      },
+      body: formData
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('Erreur lors de l\'envoi des données');
+        }
+      })
+      .then(data => {
+        console.log('Données envoyées avec succès :', data);
+        photoForm.reset();
+      })
+      .catch(error => {
+        console.error('Erreur :', error);
+      });
+  } else {
+    console.error('Veuillez remplir tous les champs du formulaire.');
+  }
+});
+
   // Fonction pour afficher la galerie
   function displayGallery(works) {
     gallery.innerHTML = "";
@@ -92,7 +159,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const addPhotoButton = document.getElementById('addPhotoButton');
     const uploadModal = document.getElementById('uploadModal');
     const closeButton = uploadModal.querySelector('.close');
-    
+
+
+
     const loginButton = document.querySelector('#loginButton');
 
     if (loginButton) {
@@ -110,6 +179,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (modalButton) {
       modalButton.style.display = 'block';
     }
+
     
     // Gestion de l'ouverture de la boîte modale
     modalButton.addEventListener('click', function () {
@@ -195,6 +265,11 @@ document.addEventListener("DOMContentLoaded", function () {
         uploadModal.style.display = 'none';
     });
 
+
+    ////////////////////////////// 2nd MODAL
+
+    // Récupérer les catégories depuis l'API
+    
     // Fermeture de la deuxième modale si l'utilisateur clique en dehors de celle-ci
     window.addEventListener('click', function (event) {
         if (event.target === uploadModal) {
@@ -212,6 +287,9 @@ document.addEventListener("DOMContentLoaded", function () {
       localStorage.removeItem('token');
       window.location.href = 'index.html';
     });
+
+    
+   
   }
 });
 
