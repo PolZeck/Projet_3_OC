@@ -621,3 +621,9 @@ input[type="file"] {
 	cursor: pointer;
 }
 
+.thumbnail {
+    max-width: 100px; /* ajustez la taille maximale */
+    max-height: 100px; /* ajustez la taille maximale */
+    width: auto;
+    height: auto;
+}

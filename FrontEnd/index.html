@@ -92,12 +92,15 @@
 					<!-- Formulaire pour ajouter une photo -->
 					<form id="photoForm">
 						<div class="photoFileContainer">	
-							<input type="file" id="photo" name="photo" accept=".jpg, .jpeg, .png" style="display: none;">
-							<i class="fa-regular fa-image"></i>
-							<label for="photo" class="file-label">
-								<span class="addPhotoFile">+ Ajouter photo</span>
-							</label>
-							<p id="tipsFile">jpg,png : 4mo max</p>
+							<div class="photoFileContent">	
+								<input type="file" id="photo" name="photo" accept=".jpg, .jpeg, .png" style="display: none;">
+								<i class="fa-regular fa-image"></i>
+								<label for="photo" class="file-label">
+									<span class="addPhotoFile">+ Ajouter photo</span>
+								</label>
+								<p id="tipsFile">jpg,png : 4mo max</p>
+							</div>
+							<div id="preview" class="preview"></div>
 						</div>
 						<div class="titlePartUploadModal">
 							<label for="title">Titre</label>
@@ -106,7 +109,7 @@
 						
 						<label for="category">Catégorie</label>
 						<select class="selectCategory" id="category" name="category">
-							<!-- Options de catégories à charger dynamiquement via API (à implémenter plus tard) -->
+							
 						</select>
 		
 						<input id="validatePhotoFile" type="submit" value="Valider">

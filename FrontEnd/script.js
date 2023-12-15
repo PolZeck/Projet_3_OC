@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
+  
   const buttonsContainer = document.querySelector(".buttons");
   const gallery = document.querySelector('.gallery');
   let worksData = [];
@@ -7,70 +8,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
   
 
-  fetch('http://localhost:5678/api/categories')
-  .then(response => response.json())
-  .then(data => {
-    categories = data;
-    
-    populateCategoriesSelect(); // Appel de la fonction pour peupler le select avec les catégories
-  })
-  .catch(error => console.error('Erreur lors de la récupération des catégories', error));
-
-  function populateCategoriesSelect() {
-    const categorySelect = document.getElementById('category');
-
-    categories.forEach(category => {
-      const option = document.createElement('option');
-      option.value = category.id;
-      option.textContent = category.name;
-      categorySelect.appendChild(option);
-    });
-  }
-  const photoForm = document.getElementById('photoForm');
-photoForm.addEventListener('submit', function (event) {
-  event.preventDefault();
-
-  // Récupérer les valeurs du formulaire
-  const title = document.getElementById('title').value;
-  const selectedCategoryId = document.getElementById('category').value;
-  const photoInput = document.getElementById('photo');
-  const photoFile = photoInput.files[0];
-
-  if (title && selectedCategoryId && photoFile) {
-    const formData = new FormData();
-    formData.append('title', title);
-    formData.append('categoryId', selectedCategoryId);
-    formData.append('photo', photoFile);
-
-    // Récupérer le token depuis le localStorage
-    const token = localStorage.getItem('token');
-
-    // Envoi des données à l'API avec le token d'accès dans les en-têtes
-    fetch('http://localhost:5678/api/works', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}` // Ajout du token dans les en-têtes
-      },
-      body: formData
-    })
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error('Erreur lors de l\'envoi des données');
-        }
-      })
-      .then(data => {
-        console.log('Données envoyées avec succès :', data);
-        photoForm.reset();
-      })
-      .catch(error => {
-        console.error('Erreur :', error);
-      });
-  } else {
-    console.error('Veuillez remplir tous les champs du formulaire.');
-  }
-});
+  
+  
+  
 
   // Fonction pour afficher la galerie
   function displayGallery(works) {
@@ -132,6 +72,7 @@ photoForm.addEventListener('submit', function (event) {
     })
     .catch(error => console.error('Erreur lors de la récupération des travaux', error));
 
+    
 
 });
 
@@ -157,7 +98,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const returnButton = document.querySelector('.returnButton')
     
     const addPhotoButton = document.getElementById('addPhotoButton');
-    const uploadModal = document.getElementById('uploadModal');
     const closeButton = uploadModal.querySelector('.close');
 
 
@@ -260,36 +200,148 @@ document.addEventListener("DOMContentLoaded", function () {
       uploadModal.style.display = 'block';
     });
 
-    // Gestion de la fermeture de la deuxième modale
-    closeButton.addEventListener('click', function () {
-        uploadModal.style.display = 'none';
-    });
+    
 
 
     ////////////////////////////// 2nd MODAL
 
-    // Récupérer les catégories depuis l'API
-    
+    // Gestion de la fermeture de la deuxième modale
+    closeButton.addEventListener('click', function () {
+      uploadModal.style.display = 'none';
+      document.getElementById('preview').innerHTML = '';
+      const photoFileContent = document.querySelector('.photoFileContent');
+      photoFileContent.style.display = 'block';
+    });
+
     // Fermeture de la deuxième modale si l'utilisateur clique en dehors de celle-ci
     window.addEventListener('click', function (event) {
-        if (event.target === uploadModal) {
-            uploadModal.style.display = 'none';
+      if (event.target === uploadModal) {
+          uploadModal.style.display = 'none';
+          document.getElementById('preview').innerHTML = '';
+          const photoFileContent = document.querySelector('.photoFileContent');
+          photoFileContent.style.display = 'block';
+      }
+      
+  });
+
+    // Retour sur la page modale d'avant lors du clique sur la fleche
+  returnButton.addEventListener('click', function (event) {
+    event.preventDefault();
+    galleryModal.style.display = 'block';
+    uploadModal.style.display = 'none';
+    document.getElementById('preview').innerHTML = '';
+    const photoFileContent = document.querySelector('.photoFileContent');
+    photoFileContent.style.display = 'block';
+  });
+
+    fetch('http://localhost:5678/api/categories')
+    .then(response => response.json())
+    .then(data => {
+      categories = data;
+      
+      populateCategoriesSelect(); // Appel de la fonction pour peupler le select avec les catégories
+    })
+    .catch(error => console.error('Erreur lors de la récupération des catégories', error));
+
+    function populateCategoriesSelect() {
+      const categorySelect = document.getElementById('category');
+
+      categories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category.id;
+        option.textContent = category.name;
+        categorySelect.appendChild(option);
+      });
+    }
+  
+    // Gestion miniaturiser photo 
+
+    const photoInput = document.getElementById('photo');
+    const preview = document.getElementById('preview');
+    const photoFileContent = document.querySelector('.photoFileContent');
+        
+    photoInput.addEventListener('change', function (event) {
+      const file = event.target.files[0];
+      if (file) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+              const img = document.createElement('img');
+              img.src = e.target.result;
+              img.alt = file.name;
+              img.classList.add('thumbnail');
+              img.style.maxWidth = '100px'; 
+              img.style.maxHeight = '100px'; 
+              preview.appendChild(img);
+
+              // Cacher la partie photoFileContent
+              if (photoFileContent) {
+                  photoFileContent.style.display = 'none';
+              }
+          };
+          reader.readAsDataURL(file);
+      }
+  });
+
+
+    // Gestion formulaire envoi
+
+    const form = document.getElementById('photoForm');
+
+    form.addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        const formData = new FormData(form);
+        
+        const token = localStorage.getItem('token');
+
+        // Récupérer les valeurs des champs
+        const image = formData.get('photo');
+        const title = formData.get('title');
+        const category = formData.get('category');
+
+        // Vérifier si les champs requis sont vides
+        if (!image || !title || !category) {
+            console.error('Veuillez remplir tous les champs du formulaire');
+            return;
+        }
+
+        try {
+            // Envoyer la requête à l'API avec les données
+            const response = await fetch('http://localhost:5678/api/works', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData,
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Projet envoyé avec succès !', data);
+
+                // Réinitialiser la miniature et afficher à nouveau photoFileContent
+                preview.innerHTML = '';
+                photoFileContent.style.display = 'block';
+
+                // Réinitialiser les champs du formulaire
+                form.reset();
+            } else {
+                console.error('Erreur lors de l\'envoi du projet');
+            }
+        } catch (error) {
+            console.error('Erreur :', error);
         }
     });
 
-    returnButton.addEventListener('click', function (event) {
-      event.preventDefault();
-      galleryModal.style.display = 'block';
-      uploadModal.style.display = 'none';
-    });
+    
+    
+    
 
     logoutButton.addEventListener('click', function () {
       localStorage.removeItem('token');
       window.location.href = 'index.html';
     });
-
-    
-   
+ 
   }
 });
 
