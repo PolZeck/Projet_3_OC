@@ -285,54 +285,58 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Gestion formulaire envoi
 
-    const form = document.getElementById('photoForm');
+    const uploadForm = document.getElementById('photoForm');
 
-    form.addEventListener('submit', async function(event) {
-        event.preventDefault();
+    uploadForm.addEventListener('submit', async function(event) {
+      event.preventDefault();
 
-        const formData = new FormData(form);
-        
+      const title = document.getElementById('title').value;
+    const categoryId = document.getElementById('category').value;
+    const image = document.getElementById('photo').files[0];
+
+    if (title === "" || categoryId === "" || image === undefined) {
+      alert("Merci de remplir tous les champs");
+      return;
+    } else if (categoryId !== "1" && categoryId !== "2" && categoryId !== "3") {
+      alert("Merci de choisir une catégorie valide");
+      return;
+    } else {
+      try {
+        const formData = new FormData();
+        formData.append("title", title);
+        formData.append("category", categoryId);
+        formData.append("image", image);
+
         const token = localStorage.getItem('token');
 
-        // Récupérer les valeurs des champs
-        const image = formData.get('photo');
-        const title = formData.get('title');
-        const category = formData.get('category');
+        const response = await fetch("http://localhost:5678/api/works", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        });
 
-        // Vérifier si les champs requis sont vides
-        if (!image || !title || !category) {
-            console.error('Veuillez remplir tous les champs du formulaire');
-            return;
+        if (response.status === 201) {
+          alert("Projet ajouté avec succès :)");
+          // Actions supplémentaires après l'ajout du projet réussi
+        } else if (response.status === 400) {
+          alert("Merci de remplir tous les champs");
+        } else if (response.status === 500) {
+          alert("Erreur serveur");
+        } else if (response.status === 401) {
+          alert("Vous n'êtes pas autorisé à ajouter un projet");
+          window.location.href = "login.html";
         }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  });
 
-        try {
-            // Envoyer la requête à l'API avec les données
-            const response = await fetch('http://localhost:5678/api/works', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                },
-                body: formData,
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                console.log('Projet envoyé avec succès !', data);
-
-                // Réinitialiser la miniature et afficher à nouveau photoFileContent
-                preview.innerHTML = '';
-                photoFileContent.style.display = 'block';
-
-                // Réinitialiser les champs du formulaire
-                form.reset();
-            } else {
-                console.error('Erreur lors de l\'envoi du projet');
-            }
-        } catch (error) {
-            console.error('Erreur :', error);
-        }
-    });
-
+   
+  
+  
     
     
     
