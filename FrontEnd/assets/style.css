@@ -627,3 +627,17 @@ input[type="file"] {
     width: auto;
     height: auto;
 }
+
+.clickable-icon {
+	cursor: pointer;
+  }
+
+  .delete-icon-container {
+	display: inline-block;
+	position: relative;
+	cursor: pointer;
+  }
+  
+  .fa-trash {
+	color: #ebebeb;
+  }

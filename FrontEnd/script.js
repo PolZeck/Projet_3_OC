@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
   
+  
   const buttonsContainer = document.querySelector(".buttons");
   const gallery = document.querySelector('.gallery');
   let worksData = [];
@@ -14,6 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Fonction pour afficher la galerie
   function displayGallery(works) {
+    
     gallery.innerHTML = "";
     works.forEach(work => {
       const figure = document.createElement('figure');
@@ -50,6 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Fonction pour filtrer la galerie en fonction de la catégorie sélectionnée
   function filterGallery(categoryId) {
+    
     const filteredWorks = (categoryId === null) ? worksData : worksData.filter(work => work.category.id === categoryId);
     displayGallery(filteredWorks);
   }
@@ -81,6 +84,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 document.addEventListener("DOMContentLoaded", function () {
+  
   const token = localStorage.getItem('token');
 
   // Vérifie si l'utilisateur est connecté en vérifiant la présence du token
@@ -90,12 +94,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const galleryPhotos = document.querySelector('.gallery-photos');
     const modalButton = document.querySelector('#modal');
     const filterSection = document.querySelector('.filter-container');
+
+    const editionMode = document.getElementById('editionMode');
+    const returnButton = document.querySelector('.returnButton');
+
     const logoutButton = document.createElement('li');
     logoutButton.textContent = 'logout';
     logoutButton.style.cursor = 'pointer';
-    const editionMode = document.getElementById('editionMode');
-    let savedGalleryContent = '';
-    const returnButton = document.querySelector('.returnButton')
     
     const addPhotoButton = document.getElementById('addPhotoButton');
     const closeButton = uploadModal.querySelector('.close');
@@ -141,48 +146,66 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Fonction pour charger les photos depuis l'API dans la galerie
     async function loadGalleryPhotos() {
+      
       try {
         const response = await fetch('http://localhost:5678/api/works');
         if (!response.ok) {
           throw new Error('Erreur lors de la récupération des photos');
         }
         const worksData = await response.json();
-
+    
         // Effacer les images précédentes
         galleryPhotos.innerHTML = '';
-
+    
         worksData.forEach(work => {
+          
+          
+          
           const imgContainer = document.createElement('div');
           const img = document.createElement('img');
           const deleteIcon = document.createElement('i');
-
+    
           img.src = work.imageUrl;
           img.alt = work.title;
           img.classList.add('gallery-photo');
-
+    
           deleteIcon.classList.add('fa', 'fa-trash', 'delete-icon');
           deleteIcon.style.color = '#ebebeb';
+          
+    
+          // Ajout de l'événement click pour la suppression
           deleteIcon.addEventListener('click', async () => {
+             // Arrête la propagation de l'événement pour éviter la fermeture de la modale
+          
             try {
               const token = localStorage.getItem('token');
               if (!token) {
                 throw new Error('Token non trouvé');
               }
-
+          
               const deleteResponse = await fetch(`http://localhost:5678/api/works/${work.id}`, {
                 method: 'DELETE',
                 headers: {
                   'Authorization': `Bearer ${token}`
                 }
               });
+          
               if (deleteResponse.ok) {
+                // Suppression réussie, enlevez l'image du DOM
                 imgContainer.remove();
+               
+                const galleryImages = document.querySelectorAll('.gallery img');
+                galleryImages.forEach(image => {
+                  if (image.alt === work.title) {
+                    image.parentNode.remove(); // Supprime l'élément parent de l'image (div.img-container)
+                  }
+                });
               }
             } catch (error) {
               console.error('Erreur lors de la suppression :', error);
             }
           });
-
+    
           imgContainer.classList.add('img-container');
           imgContainer.appendChild(img);
           imgContainer.appendChild(deleteIcon);
@@ -193,8 +216,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
 
-    addPhotoButton.addEventListener('click', function (event) {
-      event.preventDefault();
+    addPhotoButton.addEventListener('click', function () {
       galleryModal.style.display = 'none';
       // Affichage de la deuxième modale
       uploadModal.style.display = 'block';
@@ -215,6 +237,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Fermeture de la deuxième modale si l'utilisateur clique en dehors de celle-ci
     window.addEventListener('click', function (event) {
+      
       if (event.target === uploadModal) {
           uploadModal.style.display = 'none';
           document.getElementById('preview').innerHTML = '';
@@ -261,6 +284,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const photoFileContent = document.querySelector('.photoFileContent');
         
     photoInput.addEventListener('change', function (event) {
+      event.preventDefault();
       const file = event.target.files[0];
       if (file) {
           const reader = new FileReader();
@@ -269,8 +293,8 @@ document.addEventListener("DOMContentLoaded", function () {
               img.src = e.target.result;
               img.alt = file.name;
               img.classList.add('thumbnail');
-              img.style.maxWidth = '100px'; 
-              img.style.maxHeight = '100px'; 
+              img.style.maxWidth = '200px'; 
+              img.style.maxHeight = '200px'; 
               preview.appendChild(img);
 
               // Cacher la partie photoFileContent
@@ -281,66 +305,88 @@ document.addEventListener("DOMContentLoaded", function () {
           reader.readAsDataURL(file);
       }
   });
-
-
+ 
     // Gestion formulaire envoi
 
     const uploadForm = document.getElementById('photoForm');
 
-    uploadForm.addEventListener('submit', async function(event) {
+    uploadForm.addEventListener('submit', async function (event) {
+      
       event.preventDefault();
-
       const title = document.getElementById('title').value;
-    const categoryId = document.getElementById('category').value;
-    const image = document.getElementById('photo').files[0];
+      const categoryId = document.getElementById('category').value;
+      const image = document.getElementById('photo').files[0];
 
-    if (title === "" || categoryId === "" || image === undefined) {
-      alert("Merci de remplir tous les champs");
-      return;
-    } else if (categoryId !== "1" && categoryId !== "2" && categoryId !== "3") {
-      alert("Merci de choisir une catégorie valide");
-      return;
-    } else {
-      try {
-        const formData = new FormData();
-        formData.append("title", title);
-        formData.append("category", categoryId);
-        formData.append("image", image);
+      if (title === "" || categoryId === "" || image === undefined) {
+        alert("Merci de remplir tous les champs");
+        return;
+      } else if (categoryId !== "1" && categoryId !== "2" && categoryId !== "3") {
+        alert("Merci de choisir une catégorie valide");
+        return;
+      } else {
+        try {
+          const formData = new FormData();
+          formData.append("title", title);
+          formData.append("category", categoryId);
+          formData.append("image", image);
 
-        const token = localStorage.getItem('token');
+          const token = localStorage.getItem('token');
 
-        const response = await fetch("http://localhost:5678/api/works", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: formData,
-        });
+          const response = await fetch("http://localhost:5678/api/works", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            body: formData,
+          });
+          
+          if (response.status === 201) {
+            const newWorkData = await response.json(); // Récupérer les données du nouveau projet ajouté
 
-        if (response.status === 201) {
-          alert("Projet ajouté avec succès :)");
-          // Actions supplémentaires après l'ajout du projet réussi
-        } else if (response.status === 400) {
-          alert("Merci de remplir tous les champs");
-        } else if (response.status === 500) {
-          alert("Erreur serveur");
-        } else if (response.status === 401) {
-          alert("Vous n'êtes pas autorisé à ajouter un projet");
-          window.location.href = "login.html";
+            // Créer un nouvel élément figure pour le nouveau projet
+            const figure = document.createElement('figure');
+            const img = document.createElement('img');
+            const figcaption = document.createElement('figcaption');
+
+            img.src = newWorkData.imageUrl;
+            img.alt = newWorkData.title;
+            figcaption.textContent = newWorkData.title;
+
+            figure.appendChild(img);
+            figure.appendChild(figcaption);
+
+            // Ajouter le nouvel élément à la galerie
+            const gallery = document.querySelector('.gallery');
+            gallery.appendChild(figure);
+
+            // Réinitialiser les valeurs du formulaire après l'envoi réussi
+            uploadForm.reset();
+
+            // Réinitialiser la miniature affichée
+            preview.innerHTML = '';
+
+            // Réafficher la partie photoFileContent
+            if (photoFileContent) {
+              photoFileContent.style.display = 'block';
+            }
+
+            loadGalleryPhotos();
+          } else if (response.status === 400) {
+            alert("Merci de remplir tous les champs");
+          } else if (response.status === 500) {
+            alert("Erreur serveur");
+          } else if (response.status === 401) {
+            alert("Vous n'êtes pas autorisé à ajouter un projet");
+            window.location.href = "login.html";
+          }
+        } catch (error) {
+          console.log(error);
         }
-      } catch (error) {
-        console.log(error);
       }
-    }
-  });
+
+    });
 
    
-  
-  
-    
-    
-    
-
     logoutButton.addEventListener('click', function () {
       localStorage.removeItem('token');
       window.location.href = 'index.html';
@@ -352,7 +398,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // connexionPart
 
-document.getElementById('connectBtn').addEventListener('click', async function () {
+document.getElementById('connectBtn').addEventListener('click', async function (event) {
+  event.preventDefault();
   const emailInput = document.getElementById('email');
   const passwordInput = document.getElementById('password');
   const errorMessage = document.getElementById('errorMessage');
@@ -391,6 +438,3 @@ document.getElementById('connectBtn').addEventListener('click', async function (
 
 
 });
-
-
-
